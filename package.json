@@ -8,21 +8,13 @@
     "prepublish": "grunt prepublish"
   },
   "keywords": [
-    "slack"
+    "slack",
+    "heroku"
   ],
   "author": "Slack Technologies, Inc.",
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "http://github.com/slackhq/node-slack-client/raw/master/LICENSE"
-    }
-  ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/slackhq/node-slack-client.git"
-  },
-  "bugs": {
-    "url": "http://github.com/slackhq/node-slack-client/issues"
+    "url": "git@github.com:cpww/dale.git"
   },
   "dependencies": {
     "coffee-script": "~1.9.0",
