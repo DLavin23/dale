@@ -7,16 +7,16 @@ ScoreKeeper = (function() {
       scoreLog: {},
       scores: {}
     };
-    this.robot.on('loaded', (function(_this) {
-      console.log('robot loaded');
-      // return function() {
-      //   var base, base1;
-      //   (base = _this.robot.data).scoreLog || (base.scoreLog = {});
-      //   (base1 = _this.robot.data).scores || (base1.scores = {});
-      //   _this.cache.scores = _this.robot.data.scores || {};
-      //   return _this.cache.scoreLog = _this.robot.data.scoreLog || {};
-      // };
-    })(this));
+    // this.robot.on('loaded', (function(_this) {
+    //   console.log('robot loaded');
+    //   // return function() {
+    //   //   var base, base1;
+    //   //   (base = _this.robot.data).scoreLog || (base.scoreLog = {});
+    //   //   (base1 = _this.robot.data).scores || (base1.scores = {});
+    //   //   _this.cache.scores = _this.robot.data.scores || {};
+    //   //   return _this.cache.scoreLog = _this.robot.data.scoreLog || {};
+    //   // };
+    // })(this));
   }
 
   ScoreKeeper.prototype.getUser = function(user) {
@@ -27,8 +27,8 @@ ScoreKeeper = (function() {
 
   ScoreKeeper.prototype.saveUser = function(user, from) {
     this.saveScoreLog(user, from);
-    this.robot.data.scores[user] = this.cache.scores[user];
-    this.robot.data.scoreLog[user] = this.cache.scoreLog[user];
+    // this.robot.data.scores[user] = this.cache.scores[user];
+    // this.robot.data.scoreLog[user] = this.cache.scoreLog[user];
     return this.cache.scores[user];
   };
 
@@ -74,7 +74,8 @@ ScoreKeeper = (function() {
   };
 
   ScoreKeeper.prototype.validate = function(user, from) {
-    return user !== from && user !== "" && !this.isSpam(user, from);
+    // return user !== from && user !== "" && !this.isSpam(user, from);
+    return user !== from && user !== "";
   };
 
   ScoreKeeper.prototype.length = function() {
@@ -107,8 +108,8 @@ module.exports = function(robot) {
 
   robot.on('message', function(message){
     var channel, channelError, channelName, errors, response, text, textError, ts, type, typeError, user, userName;
-    channel = slack.getChannelGroupOrDMByID(message.channel);
-    user = slack.getUserByID(message.user);
+    channel = robot.getChannelGroupOrDMByID(message.channel);
+    user = robot.getUserByID(message.user);
     response = '';
     type = message.type, ts = message.ts, text = message.text;
     channelName = (channel != null ? channel.is_channel : void 0) ? '#' : '';
@@ -121,6 +122,29 @@ module.exports = function(robot) {
         var from, name, newScore;
         name = match[1].trim().toLowerCase();
         newScore = scoreKeeper.add(name, user);
+        if (newScore != null) {
+          return channel.send(name + " has " + newScore + " points.");
+        }
+      }
+    }
+  });
+
+  robot.on('message', function(message){
+    var channel, channelError, channelName, errors, response, text, textError, ts, type, typeError, user, userName;
+    channel = robot.getChannelGroupOrDMByID(message.channel);
+    user = robot.getUserByID(message.user);
+    response = '';
+    type = message.type, ts = message.ts, text = message.text;
+    channelName = (channel != null ? channel.is_channel : void 0) ? '#' : '';
+    channelName = channelName + (channel ? channel.name : 'UNKNOWN_CHANNEL');
+    userName = (user != null ? user.name : void 0) != null ? "@" + user.name : "UNKNOWN_USER";
+    console.log("Received: " + type + " " + channelName + " " + userName + " " + ts + " \"" + text + "\"");
+    if (type === 'message' && (text != null) && (channel != null)) {
+      var match = /([\w\s]+)([\W\S]*)?(\-\-)$/i.exec(text);
+      if(match) {
+        var from, name, newScore;
+        name = match[1].trim().toLowerCase();
+        newScore = scoreKeeper.subtract(name, user);
         if (newScore != null) {
           return channel.send(name + " has " + newScore + " points.");
         }

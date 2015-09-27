@@ -2,13 +2,14 @@
 (function() {
   var Slack, autoMark, autoReconnect, slack, token;
 
-	var yolos = ["http://media.giphy.com/media/7CRIsJnZc1yWk/giphy.gif",
-	"http://media.giphy.com/media/SWjCswum5dc0E/giphy.gif",
-	"http://media.giphy.com/media/WA4ayZW0DJJWU/giphy.gif",
-	"http://www.macleans.ca/wp-content/uploads/2012/11/obamabiden_wtt_vhbqy.gif",
-	"http://data.whicdn.com/images/163303862/large.gif",
-	"http://media.giphy.com/media/mSUvTbGmuJ0lO/giphy.gif"]
+  var yolos = ["http://media.giphy.com/media/7CRIsJnZc1yWk/giphy.gif",
+  "http://media.giphy.com/media/SWjCswum5dc0E/giphy.gif",
+  "http://media.giphy.com/media/WA4ayZW0DJJWU/giphy.gif",
+  "http://www.macleans.ca/wp-content/uploads/2012/11/obamabiden_wtt_vhbqy.gif",
+  "http://data.whicdn.com/images/163303862/large.gif",
+  "http://media.giphy.com/media/mSUvTbGmuJ0lO/giphy.gif"]
 
+  var scoreKeeper = require('./scoreKeeper.js');
 
   Slack = require('..');
 
@@ -19,6 +20,8 @@
   autoMark = true;
 
   slack = new Slack(token, autoReconnect, autoMark);
+
+  scoreKeeper(slack);
 
   slack.on('open', function() {
     var channel, channels, group, groups, id, messages, unreads;
@@ -67,11 +70,11 @@
     userName = (user != null ? user.name : void 0) != null ? "@" + user.name : "UNKNOWN_USER";
     console.log("Received: " + type + " " + channelName + " " + userName + " " + ts + " \"" + text + "\"");
     if (type === 'message' && (text != null) && (channel != null)) {
-			if (text.toLowerCase().indexOf("yolo") > -1) {
-				response = yolos[Math.floor(Math.random()*yolos.length)];
-				channel.send(response);
-				return console.log("@" + slack.self.name + " responded with \"" + response + "\"");
-			}
+      if (text.toLowerCase().indexOf("yolo") > -1) {
+        response = yolos[Math.floor(Math.random()*yolos.length)];
+        channel.send(response);
+        return console.log("@" + slack.self.name + " responded with \"" + response + "\"");
+      }
     } else {
       typeError = type !== 'message' ? "unexpected type " + type + "." : null;
       textError = text == null ? 'text was undefined.' : null;
