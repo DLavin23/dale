@@ -7,16 +7,16 @@ ScoreKeeper = (function() {
       scoreLog: {},
       scores: {}
     };
-    // this.robot.on('loaded', (function(_this) {
-    //   console.log('robot loaded');
-    //   // return function() {
-    //   //   var base, base1;
-    //   //   (base = _this.robot.data).scoreLog || (base.scoreLog = {});
-    //   //   (base1 = _this.robot.data).scores || (base1.scores = {});
-    //   //   _this.cache.scores = _this.robot.data.scores || {};
-    //   //   return _this.cache.scoreLog = _this.robot.data.scoreLog || {};
-    //   // };
-    // })(this));
+
+    this.robot.on('open', (function(_this) {
+       return function() {
+         var base, base1;
+         (base = _this.robot.data.scoreKeeper).scoreLog || (base.scoreLog = {});
+         (base1 = _this.robot.data.scoreKeeper).scores || (base1.scores = {});
+         _this.cache.scores = _this.robot.data.scoreKeeper.scores || {};
+         return _this.cache.scoreLog = _this.robot.data.scoreKeeper.scoreLog || {};
+       };
+    })(this));
   }
 
   ScoreKeeper.prototype.getUser = function(user) {
@@ -27,8 +27,9 @@ ScoreKeeper = (function() {
 
   ScoreKeeper.prototype.saveUser = function(user, from) {
     this.saveScoreLog(user, from);
-    // this.robot.data.scores[user] = this.cache.scores[user];
-    // this.robot.data.scoreLog[user] = this.cache.scoreLog[user];
+    this.robot.data.scoreKeeper.scores[user] = this.cache.scores[user];
+    this.robot.data.scoreKeeper.scoreLog[user] = this.cache.scoreLog[user];
+		this.robot.persist.writePersistFile(this.robot.data)
     return this.cache.scores[user];
   };
 

@@ -4,6 +4,7 @@
 	var WebSocketServer = require('ws').Server
 	  , wss = new WebSocketServer({port: process.env.PORT || 5000});
 
+  // Grab add-ons
   var osu = require('./osu.js');
   var quotes = require('./quotes.js');
   var scoreKeeper = require('./scoreKeeper.js');
@@ -18,6 +19,13 @@
   autoMark = true;
 
   slack = new Slack(token, autoReconnect, autoMark);
+
+  // Set up persistence
+  slack.persist = require('./persist.js');
+  slack.persist.readPersistFile(function(persistData) {
+    slack.data = persistData;
+    console.log(slack.data);
+  });
 
   osu(slack);
   quotes(slack);
