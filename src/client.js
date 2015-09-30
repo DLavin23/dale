@@ -110,6 +110,7 @@ Client = (function(_super) {
   };
 
   Client.prototype.connect = function() {
+    console.log(this.socketUrl);
     if (!this.socketUrl) {
       return false;
     } else {

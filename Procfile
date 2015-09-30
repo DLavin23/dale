@@ -1,1 +1,1 @@
-web: node examples/simple_reverse.js
+web: node dale/main.js
